@@ -188,3 +188,136 @@ while(True):
 ```
 
 This may seem complicated, but it is very simple in reality. We create a frame, which is basically a window within the window, to house the entry and button because they can be thought of as one component rather than two because they are both part of the color picker. We then set the frame on the master, and then the entry and button on the frame. We also make another stringVar to hold the value of the entry widget and set the background color of the two widgets to be that color.
+
+##Reminders
+
+Now we must crown our program with the most complicated module yet: the reminder system! To create this we will make a frame to fill the right side of the screen and put another frame along with an entrybox and a button. The frame within the frame will hold the reminders, while the entry and the button will allow us to add new ones. The complete code looks like this:
+
+```python
+from tkinter import *
+import time
+
+master = Tk()
+master.geometry("512x256")
+master.grid_rowconfigure(0,weight=1)
+master.grid_rowconfigure(1,weight=1)
+master.grid_columnconfigure(0,weight=1)
+master.grid_columnconfigure(1,weight=1)
+
+timeVar = StringVar()
+colorVar = StringVar()
+colorVar.set("#00FF88")
+reminderVar = StringVar()
+
+def updateColor():
+    colorEntry = Entry(colorFrame, textvariable=colorVar, bg=colorVar.get(), relief=RAISED)
+    colorButton = Button(colorFrame, text="Update Color", bg=colorVar.get(), command=updateColor, relief=RAISED)
+    colorEntry.grid(row=0, column=0, sticky=N + E + W + S)
+    colorButton.grid(row=1, column=0, sticky=N + E + W + S)
+
+label = Label(master, textvariable=timeVar, relief=RAISED)
+label.grid(row=0,column=0,sticky=N+W+E+S)
+
+colorFrame = Frame(master, relief=RAISED)
+colorEntry = Entry(colorFrame, textvariable=colorVar, bg=colorVar.get(), relief=RAISED)
+colorButton = Button(colorFrame, text="Update Color", bg=colorVar.get(), command=updateColor, relief=RAISED)
+colorFrame.grid(row=1,column=0,sticky=N+E+W+S)
+colorFrame.grid_rowconfigure(0,weight=1)
+colorFrame.grid_rowconfigure(1,weight=1)
+colorFrame.grid_columnconfigure(0,weight=1)
+colorEntry.grid(row=0, column=0,sticky=N+E+W+S)
+colorButton.grid(row=1, column=0,sticky=N+E+W+S)
+
+def addReminder():
+    reminders.append(reminderVar.get())
+    reminderVar.set('')
+
+reminderFrame = Frame(master, relief=RAISED)
+reminders = ["Test Reminder"]
+reminderList = Frame(reminderFrame, relief=RAISED)
+reminderEntry = Entry(reminderFrame, textvariable=reminderVar, relief=RAISED)
+reminderButton = Button(reminderFrame, text='Add Reminder', relief=RAISED, command=addReminder)
+reminderFrame.grid(row=0,column=1,rowspan=2,sticky=N+E+W+S)
+reminderFrame.grid_rowconfigure(0, weight=9)
+reminderFrame.grid_rowconfigure(1, weight=1)
+reminderFrame.grid_columnconfigure(0,weight=1)
+reminderList.grid(row=0,column=0,columnspan=2,sticky=N+E+W+S)
+reminderList.grid_columnconfigure(0,weight=1)
+reminderEntry.grid(row=1,column=0,sticky=N+E+W+S)
+reminderButton.grid(row=1,column=1,sticky=N+E+W+S)
+
+def updateReminderList():
+    for reminder in reminders:
+        l = Label(reminderList, text=reminder, relief=RAISED)
+        l.grid(row=reminders.index(reminder),column=0,sticky=N+E+W+S)
+
+while(True):
+    timeVar.set(time.strftime("%I:%M:%S %m/%d/%Y"))
+    updateReminderList()
+    master.update_idletasks()
+    master.update()
+```
+
+Let's go through this slowly to make sure that it is understood. First, we create a frame called reminderFrame and we place it on the grid as well as configuring it to display it's contents properly.
+
+```python
+reminderFrame = Frame(master, relief=RAISED)
+```
+```python
+reminderFrame.grid(row=0,column=1,rowspan=2,sticky=N+E+W+S)
+reminderFrame.grid_rowconfigure(0, weight=9)
+reminderFrame.grid_rowconfigure(1, weight=1)
+reminderFrame.grid_columnconfigure(0,weight=1)
+```
+
+After this, we create the frame that will only hold the reminders and we place it on the grid.
+
+```python
+reminderList = Frame(reminderFrame, relief=RAISED)
+```
+```python
+reminderList.grid(row=0,column=0,columnspan=2,sticky=N+E+W+S)
+reminderList.grid_columnconfigure(0,weight=1)
+```
+
+Then we make the entry and the button for interactivity.
+
+```python
+reminderEntry = Entry(reminderFrame, textvariable=reminderVar, relief=RAISED)
+reminderButton = Button(reminderFrame, text='Add Reminder', relief=RAISED, command=addReminder)
+```
+```python
+reminderEntry.grid(row=1,column=0,sticky=N+E+W+S)
+reminderButton.grid(row=1,column=1,sticky=N+E+W+S)
+```
+
+We then make two new functions that will handle when a new reminder is added and will tell the program how to show the reminders
+
+```python
+def addReminder():
+    reminders.append(reminderVar.get())
+    reminderVar.set('')
+```
+```python
+def updateReminderList():
+    for reminder in reminders:
+        l = Label(reminderList, text=reminder, relief=RAISED)
+        l.grid(row=reminders.index(reminder),column=0,sticky=N+E+W+S)
+
+while(True):
+    timeVar.set(time.strftime("%I:%M:%S %m/%d/%Y"))
+    updateReminderList()
+    master.update_idletasks()
+    master.update()
+```
+
+Finally, we make the string variable to attach the entry to and then we make an array to store the reminder text
+
+```python
+reminderVar = StringVar()
+```
+```python
+reminders = ["Test Reminder"]
+```
+
+And there it is! You now have a program that shows the time, allows you to set reminders, and displays colors!
